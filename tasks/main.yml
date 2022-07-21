@@ -1,0 +1,32 @@
+---
+# tasks file for ansible-role-create-user
+
+- name: 1.0 | main.yml | Add user
+  ansible.builtin.user:
+    name: "{{ add_user }}"
+    ssh_key_file:
+
+- name: 2.0 | main.yml | Set user password
+  ansible.builtin.shell: echo {{ add_user_passwd }} | passwd --stdin {{ add_user }}
+
+- name: 3.0 | main.yml | Set authorized key taken from the current user
+  ansible.posix.authorized_key:
+    user: "{{ add_user }}"
+    state: present
+    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+
+- name: 4.0 | main.yml | Allow the user to run any commands
+  community.general.sudoers:
+    name: "{{ add_user }}"
+    state: present
+    user: "{{ add_user }}"
+    commands: ALL
+
+- name: 5.0 | main.yml | Revert back SSHD config
+  ansible.builtin.replace:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin yes$'
+    replace: '#PermitRootLogin prohibit-password'
+    backup: true
+  notify:
+    - "Reload SSHD"

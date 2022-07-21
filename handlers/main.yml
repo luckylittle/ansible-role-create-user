@@ -1,0 +1,6 @@
+---
+# handlers file for ansible-role-create-user
+- name: Reload SSHD
+  ansible.builtin.service:
+    name: sshd
+    state: reloaded
