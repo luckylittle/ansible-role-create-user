@@ -1,10 +1,10 @@
 ---
 # defaults file for ansible-role-create-user
 
+# What user do you want to add to the system?
 add_user: "redhat"
 
-# Example of the encrypted variable
-# Encrypted string is `r3dh4t`, password to decrypt is `password1`
+# What is this user's password?
 add_user_passwd: !vault |
   $ANSIBLE_VAULT;1.1;AES256
   39656338633932333666623834353763353063383131333137666366343263633164343362386534
@@ -12,3 +12,5 @@ add_user_passwd: !vault |
   65393233396562373830393762366539386361376261323937393933323939653331663632333533
   3465653166636236350a306562363935633233633335636237316366613737393766393831323830
   6533
+# ^^ An example of the encrypted variable with `ansible-vault encrypt_string` command
+# The value is `r3dh4t`, password to decrypt is `password1`

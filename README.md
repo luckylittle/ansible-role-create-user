@@ -1,30 +1,38 @@
-Role Name
+ansible-role-create-user
 =========
 
-A brief description of the role goes here.
+Adds user to a brand new RHEL system for use with Ansible. It automatically creates a local user with defined password and also distributes the SSH public key of the user who runs this role (it assumes `~/.ssh/id_rsa.pub`).
 
 Requirements
 ------------
 
+* It is expected, that you have a brand new RHEL system and have `root` access. In order for this role to be able to work, the following changes need to be made first:
+
 ```bash
-# Log in as root and run
+# Log in as root and run. This role will revert this back at the end, so don't worry:
 sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 systemctl reload sshd
-# Copy SSH key from your workstation to your target host
+exit
+
+# Copy SSH key from your workstation to your root user on target host
 ssh-copy-id root@host
-# Test if Ansible works
-ansible seedbox -m ping -i inventory -u root
+
+# Test if Ansible ping works now without a password
+ansible seedbox -m ping -i host, -u root
 ```
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+`defaults/main.yml`:
+
+* `add_user` - defines the user to be added, default is `redhat`
+* `add_user_passwd` - defines the password of the newly created user, default is `r3dh4t`
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+None
 
 Example Playbook
 ----------------
@@ -36,8 +44,8 @@ Including an example of how to use your role (for instance, with variables passe
 - hosts: seedbox
   remote_user: root
   vars:
-    add_user: redhat
-    add_user_passwd: redhat1
+    add_user: seedbox
+    add_user_passwd: supersecretpassword
   roles:
     - ansible-role-create-user
 ```
@@ -48,10 +56,10 @@ Then run:
 ansible-playbook -i inventory --vault-password-file=password site.yml
 ```
 
-or
+Another example of the same:
 
 ```bash
-
+ansible-playbook -i 192.168.1.1, -e add_user=seedbox -e add_user_passwd=supersecretpassword site.yml
 ```
 
 License
@@ -62,4 +70,4 @@ MIT
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Lucian Maly <<lmaly@redhat.com>>
