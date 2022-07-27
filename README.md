@@ -53,6 +53,10 @@ Including an example of how to use your role (for instance, with variables passe
 Then run:
 
 ```bash
+echo 'password1' > password
+```
+
+```bash
 ansible-playbook -i inventory --vault-password-file=password site.yml
 ```
 
